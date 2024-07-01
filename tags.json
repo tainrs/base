@@ -2,13 +2,13 @@
   "alpine": {
     "description": "Alpine 3.20",
     "hide": false,
-    "last_updated": "2024-07-01T17:09:48.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9748300654",
+    "last_updated": "2024-07-01T18:11:29.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9749042255",
     "latest": false,
     "tags": [
       "alpine",
       "alpine-3.2.0.0",
-      "alpine-aafd897"
+      "alpine-0e97394"
     ]
   },
   "noble": {
