@@ -14,13 +14,13 @@
   "noble": {
     "description": "Ubuntu 24.04",
     "hide": false,
-    "last_updated": "2024-07-01T20:58:30.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9750938904",
+    "last_updated": "2024-07-02T13:33:33.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9761954686",
     "latest": false,
     "tags": [
       "noble",
       "noble-3.2.0.0",
-      "noble-4ecea6f"
+      "noble-05d084b"
     ]
   }
 }
