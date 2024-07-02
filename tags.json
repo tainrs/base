@@ -11,6 +11,18 @@
       "alpine-103ff65"
     ]
   },
+  "jammy": {
+    "description": "Ubuntu 22.04",
+    "hide": false,
+    "last_updated": "2024-07-02T14:06:34.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9762438304",
+    "latest": false,
+    "tags": [
+      "jammy",
+      "jammy-3.2.0.0",
+      "jammy-7038500"
+    ]
+  },
   "noble": {
     "description": "Ubuntu 22.04",
     "hide": false,
