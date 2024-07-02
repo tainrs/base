@@ -12,15 +12,15 @@
     ]
   },
   "noble": {
-    "description": "Ubuntu 24.04",
+    "description": "Ubuntu 22.04",
     "hide": false,
-    "last_updated": "2024-07-02T13:33:33.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9761954686",
+    "last_updated": "2024-07-02T14:04:57.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9762433891",
     "latest": false,
     "tags": [
       "noble",
       "noble-3.2.0.0",
-      "noble-05d084b"
+      "noble-7038500"
     ]
   }
 }
