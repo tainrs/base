@@ -1,0 +1,9 @@
+.git
+.github
+.gitattributes
+LICENSE
+README.md
+VERSION.json
+build.sh
+update-digests.sh
+update-versions.sh
