@@ -1,0 +1,12 @@
+{
+  "description": "Ubuntu 24.04",
+  "test_amd64": false,
+  "test_arm64": false,
+  "test_url": null,
+  "upstream_digest_amd64": "sha256:c920ba4cfca05503764b785c16b76d43c83a6df8d1ab107e7e6610000d94315c",
+  "upstream_digest_arm64": "sha256:010f94447a26deb0dcdbbeb08d7dfcd87b64c40b4f25d0cf4d582949b735039d",
+  "upstream_image": "ubuntu",
+  "upstream_tag": "24.04",
+  "version": "3.2.0.0",
+  "version_s6": "3.2.0.0"
+}
