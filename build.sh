@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Docker build script for multi-architecture images.
+# Docker build script for multi-architecture images!
 #
 #  _______ _______ _____ __   _  ______ _______
 #     |    |_____|   |   | \  | |_____/ |______
