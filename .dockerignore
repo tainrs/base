@@ -1,6 +1,8 @@
 .git
 .github
 .gitattributes
+.gitignore
+.vscode
 LICENSE
 README.md
 VERSION.json
