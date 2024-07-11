@@ -1,0 +1,12 @@
+{
+  "description": "Ubuntu 22.04",
+  "test_amd64": false,
+  "test_arm64": false,
+  "test_url": null,
+  "upstream_digest_amd64": "sha256:0eb0f877e1c869a300c442c41120e778db7161419244ee5cbc6fa5f134e74736",
+  "upstream_digest_arm64": "sha256:1d19c776e76cdb32dcc72cbd44a689c9be9518b9c4ed7f9a92b38f46176b931b",
+  "upstream_image": "ubuntu",
+  "upstream_tag": "22.04",
+  "version": "3.2.0.0",
+  "version_s6": "3.2.0.0"
+}

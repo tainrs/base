@@ -1,0 +1,114 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+umask "${UMASK}"
+
+if [[ ! -d "${CONFIG_DIR}/tailscale/" ]]; then
+    mkdir "${CONFIG_DIR}/tailscale"
+    find "${CONFIG_DIR}/tailscale" -maxdepth 0 \( ! -user "${USERNAME}" -or ! -group "${USERNAME}" \) -exec chown "${USERNAME}":"${USERNAME}" {} +
+fi
+
+# Remove the PID file if it exists
+if [[ -f "${CONFIG_DIR}/tailscale/tailscaled.pid" ]]; then
+    rm -f "${CONFIG_DIR}/tailscale/tailscaled.pid"
+fi
+
+# Check if the NET_ADMIN capability is set
+if ! capsh --print | grep -q "Current:.*cap_net_admin"; then
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] [--cap-add=NET_ADMIN] is not set or running with [--privileged=true]. Exiting..."
+    echo "Add: --cap-add=NET_ADMIN"
+    echo "Remove: --privileged=true"
+    exit 1
+fi
+
+# Start tailscaled in the background
+echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Starting tailscaled..."
+tailscaled --state="${CONFIG_DIR}/tailscale/tailscaled.state" --socket="${TS_SOCKET}" > /dev/null 2>&1 &
+
+TAILSCALED_PID=$!
+
+# Store tailscaled PID in a file
+echo "${TAILSCALED_PID}" > "${CONFIG_DIR}/tailscale/tailscaled.pid"
+
+# Wait for a short period to allow the daemon to initialize
+sleep 2
+
+# Check if the tailscaled process is still running
+if ! kill -0 $TAILSCALED_PID > /dev/null 2>&1; then
+    # Handle the failure (e.g., exit the script or retry)
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Failed to start tailscaled...."
+
+    # Unset TS_SOCKET environment variable
+    unset TS_SOCKET
+
+    exit 1
+    # Proceed with further actions
+fi
+
+# Check existance of mandatory environment variables and ensure they exist and are not empty or null (TS_AUTHKEY, TS_ADVERTISE_TAGS)
+if [[ -z "${TS_AUTHKEY}" ]]; then
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] TS_AUTHKEY is not set. Exiting..."
+    exit 1
+fi
+
+if [[ -z "${TS_ADVERTISE_TAGS}" ]]; then
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] TS_ADVERTISE_TAGS is not set. Exiting..."
+    exit 1
+fi
+
+# If TS_HOSTNAME is not set, grab current hostname and set it as TS_HOSTNAME
+if [[ -z "${TS_HOSTNAME}" ]]; then
+    TS_HOSTNAME=$(hostname)
+fi
+
+# Check if tailnet alread has a host with the same hostname
+if tailscale --socket "${TS_SOCKET}" status | grep -q "Hostname: ${TS_HOSTNAME}"; then
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Hostname ${TS_HOSTNAME} already exists in tailnet. Exiting..."
+    exit 1
+fi
+
+# Start tailscale up
+echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Starting tailscale up..."
+
+# Initialize an array to hold the arguments
+args=("--authkey=${TS_AUTHKEY}" "--advertise-tags=${TS_ADVERTISE_TAGS}" "--hostname=${TS_HOSTNAME}")
+
+# Conditionally add arguments to the array
+[ "${TS_ACCEPT_ROUTES}" == "true" ] && args+=("--accept-routes=\"true\"")
+[ "${TS_SNAT_SUBNET_ROUTES}" == "true" ] && args+=("--snat-subnet-routes=\"true\"")
+[ "${TS_ADVERTISE_EXIT_NODE}" == "true" ] && args+=("--advertise-exit-node=\"true\"")
+[ "${TS_FORCE_REAUTH}" == "true" ] && args+=("--force-reauth=\"true\"")
+[ "${TS_ACCEPT_DNS}" == "true" ] && args+=("--accept-dns=\"true\"")
+[ -n "${TS_ADVERTISE_ROUTES}" ] && args+=("--advertise-routes=${TS_ADVERTISE_ROUTES}")
+[ ! "${TS_NO_RESET}" == "true" ] && args+=("--reset")
+
+# Execute the tailscale command with the constructed arguments and capture the output in a variable for later use (tailscale_output)
+tailscale_output=$(tailscale --socket "${TS_SOCKET}" up "${args[@]}" 2>&1)
+
+TAILSCALE_UP_STATUS=$?
+
+# If tailscale up failed, exit 1
+if [[ $TAILSCALE_UP_STATUS -ne 0 ]]; then
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Failed to start tailscale up..."
+
+    # Output the tailscale up command
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] tailscale up command: tailscale --socket ${TS_SOCKET} up ${args[*]}"
+
+    # Output the tailscale up output
+    echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] tailscale up output: ${tailscale_output}"
+
+    exit 1
+fi
+
+# Start tailscale serve if TS_SERVE is set to a valid port number (between 1 and 65535)
+if [[ -n "${TS_SERVE}" ]] && [[ "${TS_SERVE}" -ge 1 ]] && [[ "${TS_SERVE}" -le 65535 ]]; then
+    echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Starting tailscale serve on port ${TS_SERVE}..."
+    tailscale --socket "${TS_SOCKET}" serve --bg "${TS_SERVE}" > /dev/null 2>&1
+    TAILSCALE_SERVE_STATUS=$?
+
+    # If tailscale serve failed, exit 1
+    if [[ $TAILSCALE_SERVE_STATUS -ne 0 ]]; then
+        echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Failed to start tailscale serve..."
+        exit 1
+    fi
+fi
