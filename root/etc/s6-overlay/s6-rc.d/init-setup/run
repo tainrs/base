@@ -1,0 +1,69 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+umask "${UMASK}"
+
+mask() {
+    local n=3
+    [[ ${#1} -le 5 ]] && n=$(( ${#1} - 3 ))
+    local a="${1:0:${#1}-n}"
+    local b="${1:${#1}-n}"
+    printf "%s%s\n" "${a//?/*}" "$b"
+}
+
+image=$(jq -r '.image' <<< "$(base64 --decode <<< "${IMAGE_STATS}")")
+branch=$(awk -F ':' '{print $2}' <<< "${image}")
+repo=$(awk -F ':' '{print $1}' <<< "${image}")
+revision=$(jq -r '.revision' <<< "$(base64 --decode <<< "${IMAGE_STATS}")")
+latest_revision=$(curl -fsL --max-time 10 "https://raw.githubusercontent.com/${repo}/master/tags.json" | jq -r '.'"${branch}"'.tags[2]' 2> /dev/null | awk -F '-' '{print $2}')
+revision_status=$(curl -fsL --max-time 10 "https://api.github.com/repos/${repo}/compare/${latest_revision}...${revision}" | jq -r 'if (.behind_by | length) != 0 then "(\(.status), by \(.behind_by))" else empty end')
+
+echo -ne "
+$(figlet -d /usr/share/figlet -f Cyberlarge.flf "tainrs")
+
+    "A Docker base image designed to provide a robust and versatile foundation for containerized applications."
+    Copyright (C) 2024 B. van Wetten - https://github.com/tainrs/base/blob/main/LICENSE
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Documentation: https://tainrs.dev$(jq -r 'if .app != "" then "/containers/\(.app)" else empty end' <<< "$(base64 --decode <<< "${IMAGE_STATS}")")
+Image:         ${image}
+Revision:      ${revision} ${revision_status}
+Version:       $(jq -r '.version' <<< "$(base64 --decode <<< "${IMAGE_STATS}")")
+OS:            $(uname -s) $(uname -r) $(uname -m)
+
+----------------------------------------------------------------------
+ENVIRONMENT BASE
+----------------------------------------------------------------------
+USERNAME=${USERNAME}
+PUID=${PUID}
+PGID=${PGID}
+UMASK=${UMASK}
+TZ=${TZ}"
+echo -ne "
+----------------------------------------------------------------------
+
+"
+
+echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Setup] Executing usermod..."
+mkdir "/tmp/temphome"
+usermod -d "/tmp/temphome" "${USERNAME}"
+usermod -o -u "${PUID}" "${USERNAME}"
+usermod -d "${CONFIG_DIR}" "${USERNAME}"
+rm -rf "/tmp/temphome"
+groupmod -o -g "${PGID}" "${USERNAME}"
+
+echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Setup] Applying permissions to ${CONFIG_DIR}"
+chmod "=rwx" "${CONFIG_DIR}"
+find "${CONFIG_DIR}" -maxdepth 0 \( ! -user "${USERNAME}" -or ! -group "${USERNAME}" \) -exec chown "${USERNAME}":"${USERNAME}" {} +

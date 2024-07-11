@@ -1,0 +1,14 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+umask "${UMASK}"
+
+echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Healthcheck active."
+
+while true; do
+    sleep 600
+    if ! ping -c 4 -W 1 100.100.100.100 > /dev/null 2>&1; then
+        echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Healthcheck failed! Exiting..."
+        exit 110
+    fi
+done

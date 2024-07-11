@@ -1,0 +1,28 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+umask "${UMASK}"
+
+# Attempt to logout of tailscale
+echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Logging out of tailscale..."
+tailscale --socket "${TS_SOCKET}" logout
+
+# Wait for a short period to allow for the logout to complete
+sleep 2
+
+# If tailscaled daeomon is running, stop tailscaled (use tailscaled pid file)
+if [[ -f "${CONFIG_DIR}/tailscale/tailscaled.pid" ]]; then
+    TAILSCALED_PID=$(cat "${CONFIG_DIR}/tailscale/tailscaled.pid")
+    if kill -0 "${TAILSCALED_PID}" > /dev/null 2>&1; then
+        echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] Stopping tailscaled..."
+        kill -15 "${TAILSCALED_PID}"
+        sleep 2
+        if kill -0 "${TAILSCALED_PID}" > /dev/null 2>&1; then
+            echo "[ERR] [$(date '+%Y-%m-%d %H:%M:%S')] [Tailscale] tailscaled did not stop gracefully. Killing tailscaled..."
+            kill -9 "${TAILSCALED_PID}"
+        fi
+    fi
+fi
+
+find "${CONFIG_DIR}/tailscale/" \( ! -user "${USERNAME}" -or ! -group "${USERNAME}" \) -exec chown "${USERNAME}":"${USERNAME}" {} +
+

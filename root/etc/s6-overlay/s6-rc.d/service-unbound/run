@@ -1,0 +1,24 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+umask "${UMASK}"
+
+echo "# Unbound enabled" > "/etc/resolv.conf"
+echo "nameserver 127.0.0.1" >> "/etc/resolv.conf"
+
+UNBOUND_CONF="${APP_DIR}/unbound.conf"
+
+# Check if the input file exists
+if [ ! -f "${UNBOUND_CONF}.template" ]; then
+    echo "File not found: ${UNBOUND_CONF}.template"
+    exit 1
+fi
+
+CONTENT=$(cat "${UNBOUND_CONF}.template")
+
+eval "cat <<EOF
+$CONTENT
+EOF
+" > "${UNBOUND_CONF}"
+
+/usr/sbin/unbound -c "${APP_DIR}/unbound.conf" -d -p
