@@ -12,15 +12,15 @@
     ]
   },
   "jammy": {
-    "description": "Ubuntu 24.04",
+    "description": "Ubuntu 22.04",
     "hide": false,
-    "last_updated": "2024-07-11T13:21:24.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9892217453",
+    "last_updated": "2024-07-11T13:55:03.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9892735775",
     "latest": false,
     "tags": [
       "jammy",
       "jammy-3.2.0.0",
-      "jammy-9e508e4"
+      "jammy-aa0f1fc"
     ]
   }
 }
