@@ -14,13 +14,13 @@
   "jammy": {
     "description": "Ubuntu 22.04",
     "hide": false,
-    "last_updated": "2024-07-11T14:24:11.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9893190844",
+    "last_updated": "2024-07-12T13:23:58.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/9908592203",
     "latest": false,
     "tags": [
       "jammy",
       "jammy-3.2.0.0",
-      "jammy-8ce3412"
+      "jammy-324b7d2"
     ]
   }
 }
