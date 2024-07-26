@@ -66,4 +66,4 @@ groupmod -o -g "${PGID}" "${USERNAME}"
 
 echo "[INF] [$(date '+%Y-%m-%d %H:%M:%S')] [Setup] Applying permissions to ${CONFIG_DIR}"
 chmod "=rwx" "${CONFIG_DIR}"
-find "${CONFIG_DIR}" -maxdepth 0 \( ! -user "${USERNAME}" -or ! -group "${USERNAME}" \) -exec chown "${USERNAME}":"${USERNAME}" {} +
+find "${CONFIG_DIR}" \( ! -user "${USERNAME}" -or ! -group "${USERNAME}" \) -exec chown "${USERNAME}":"${USERNAME}" {} +
