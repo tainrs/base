@@ -34,5 +34,17 @@
       "update-versions-alpine-3.2.0.2",
       "update-versions-alpine-df77190"
     ]
+  },
+  "update-versions-jammy": {
+    "description": "Ubuntu 22.04",
+    "hide": false,
+    "last_updated": "2024-10-11T01:06:15.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/11284456335",
+    "latest": false,
+    "tags": [
+      "update-versions-jammy",
+      "update-versions-jammy-3.2.0.2",
+      "update-versions-jammy-b1a9a44"
+    ]
   }
 }
