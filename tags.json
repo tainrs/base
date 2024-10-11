@@ -22,5 +22,17 @@
       "jammy-3.2.0.0",
       "jammy-0342f61"
     ]
+  },
+  "update-versions-alpine": {
+    "description": "Alpine 3.20",
+    "hide": false,
+    "last_updated": "2024-10-11T01:06:00.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/11284455780",
+    "latest": false,
+    "tags": [
+      "update-versions-alpine",
+      "update-versions-alpine-3.2.0.2",
+      "update-versions-alpine-df77190"
+    ]
   }
 }
