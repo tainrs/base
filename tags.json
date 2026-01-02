@@ -26,13 +26,13 @@
   "update-versions-alpine": {
     "description": "Alpine 3.20",
     "hide": false,
-    "last_updated": "2024-10-11T01:06:00.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/11284455780",
+    "last_updated": "2026-01-02T22:23:31.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/20667856325",
     "latest": false,
     "tags": [
       "update-versions-alpine",
-      "update-versions-alpine-3.2.0.2",
-      "update-versions-alpine-df77190"
+      "update-versions-alpine-3.2.1.0",
+      "update-versions-alpine-8ba1625"
     ]
   },
   "update-versions-jammy": {
