@@ -14,13 +14,13 @@
   "jammy": {
     "description": "Ubuntu 22.04",
     "hide": false,
-    "last_updated": "2026-01-03T10:11:54.000Z",
-    "last_updated_url": "https://github.com/tainrs/base/actions/runs/20675838559",
+    "last_updated": "2026-01-03T11:08:01.000Z",
+    "last_updated_url": "https://github.com/tainrs/base/actions/runs/20676418433",
     "latest": false,
     "tags": [
       "jammy",
       "jammy-3.2.1.0",
-      "jammy-dff8f43"
+      "jammy-bc31a9a"
     ]
   },
   "update-versions-alpine": {
